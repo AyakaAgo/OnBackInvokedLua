@@ -30,7 +30,7 @@ activity.setContentView(loadlayout{
     --the higher priority will called first
     --priority SHOULD NOT be negative
 
-    if not backDispatcher.isTagRegistered("back") then
+    if not backDispatcher.isTagRegistered(this,"back") then
       --this method will throw if tag or priority already exists, but will not replace
       backDispatcher.register(this,"back",function(dispatcher, context, tag)
         view.setText("Click me.")

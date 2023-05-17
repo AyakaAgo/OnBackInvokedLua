@@ -17,6 +17,7 @@ Copyright (C) 2018-2022 The AGYS Windmill Open Source Project
 --sample in main.lua and readme.md
 
 local _M={
+  --you can hard-coded your priority without accessing these constants
   PRIORITY_DEFAULT = 0,
   PRIORITY_OVERLAY = 1000000,
 }
@@ -47,17 +48,9 @@ Q: Will it get callback if predictive back animation is disabled?
 A: Yes. If you declared callback enabled in manifest, you will always receive then. The option
    in Developer Option only affect visual effect.
 
-Q: Why there's still onKeyUp(Down) in some page?
-A: They're for backward capability (commented with keep), sometime we may need to do
-   something if system doesn't support this feature. For example in Windmill, we clear the
-   alpha background of some activities before finishing them.
-
-   NOTICE: unless you #unregister or #setEnabled with false to a callback, they will always
-            intercept back events, but onKeyUp(Down) may not.
-            
    NOTICE: If you declared callback enabled in manifest and running in 33 or higher platform,
             you will not get onKeyUp(Down) with KEYCODE_BACK event but KEYCODE_BACK
-            isn't deprecated. (see Q6)
+            isn't deprecated. (see Q5)
 
 Q: Will it get animation callback if predictive back animation is disabled?
 A: same to Q3

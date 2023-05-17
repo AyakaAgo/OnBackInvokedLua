@@ -110,13 +110,15 @@ Here's an example of how you might implement this feature:
 
 ```lua
 --local BackEvent = luajava.bindClass"android.window.BackEvent"
+local backDispatcher = require"backdispatcher"
+
 --TODO
 --your view here
 local view
 local screenWidth = luajava.bindClass"android.content.res.Resources".getSystem().getDisplayMetrics().widthPixels
 local maxXShift = screenWidth / 20
 
-require"backdispatcher".register(
+backDispatcher.register(
   activity,
   "custom_back_animation",
   {

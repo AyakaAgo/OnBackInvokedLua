@@ -58,12 +58,6 @@ If the object returned by `luajava.override`, `luajava.new` has a wrong type, ad
 
 3. Unregister the callback when ready to stop intercepting the back gesture. Otherwise, users may see undesirable behavior when using a system back navigation—for example, "getting stuck" between views and forcing them to force quit your app.
 
-done.
-
-> **Note: To synchronize behavior with the new platform API, we DO NOT intercept back events by the callback's return value, so DO NOT return boolean in callbacks. You SHOULD always call `unregister` or `setEnabled` to stop intercepting back events.** 
-
-> **Caution: If you don’t update your app by the next major version of Android following 13, users will experience broken Back navigation when running your app.**
-
 Here’s an example of how to migrate logic out of old implementation:
 ```lua
 local backDispatcher = require"backdispatcher"
@@ -94,6 +88,12 @@ backDispatcher.register(
 )
 ```
 
+done.
+
+> **Note: To synchronize behavior with the new platform API, we DO NOT intercept back events by the callback's return value, so DO NOT return boolean in callbacks. You SHOULD always call `unregister` or `setEnabled` to stop intercepting back events.** 
+
+> **Caution: If you don’t update your app by the next major version of Android following 13, users will experience broken Back navigation when running your app.**
+
 ## Add support for built-in and custom predictive back animations
 
 In **Android 14 and later**, if you've already migrated your app to the new system back APIs, you can opt in to predictive back to automatically receive in-app animations and also support custom transitions with [OnBackAnimationCallback](https://developer.android.google.cn/reference/kotlin/android/window/OnBackAnimationCallback).
@@ -102,7 +102,7 @@ After opting in, your app displays animations for back-to-home, cross-activity, 
 
 <img src="https://github.com/AyakaAgo/OnBackInvokedLua/blob/main/images/bottom%20sheet.gif?raw=true" alt="animation callback in bottom sheet" width="33%"><img src="https://github.com/AyakaAgo/OnBackInvokedLua/blob/main/images/side%20sheet.gif?raw=true" alt="animation callback in side sheet" width="33%">
 <img src="https://github.com/AyakaAgo/OnBackInvokedLua/blob/main/images/search.gif?raw=true" alt="animation callback in search" width="33%">
-\**from MDC Android library.*
+\**from [MDC Android](https://github.com/material-components/material-components-android/blob/master/docs/foundations/PredictiveBack.md) library.*
 
 Here's an example of how you might implement this feature:
 

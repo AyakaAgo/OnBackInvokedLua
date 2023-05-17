@@ -115,10 +115,10 @@ require"backdispatcher".register(
   {
     onBackProgressed=function(backEvent)
       local progress = backEvent.getProgress()
-      local translation = progress*maxXShift
+      local translation = progress * maxXShift
+      local scale = 1 - 0.1 * backEvent.progress
       view.setTranslationX(backEvent.getSwipeEdge() == backEvent.EDGE_LEFT and translation or -translation)
-      local scale = 1 - (0.1 * backEvent.progress)
-      view.setScaleX(scale).setScaleY(scale)
+        .setScaleX(scale).setScaleY(scale)
     end,
     onBackInvoked=function(dispatcher, context, tag) {
       --Do something after the back gesture completes.

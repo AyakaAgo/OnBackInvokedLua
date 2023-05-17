@@ -17,7 +17,6 @@ Copyright (C) 2018-2022 The AGYS Windmill Open Source Project
 --see OnBackInvokedCallback.lua also
 
 require"import"
-local backDispatcher = require"backdispatcher"
 
 activity.setContentView(loadlayout{
   TextView,
@@ -32,7 +31,7 @@ activity.setContentView(loadlayout{
     --onBackStarted, onBackProgressed, onBackCancelled only available in Android 14 and later
     --if you pass these value below 14, they will be ignored
 
-    backDispatcher.registerIfUnregistered(this,"back",{
+    require"backdispatcher".registerIfUnregistered(this,"back",{
       onBackInvoked=function(dispatcher, context, tag)
         view.setText("Click me.")
         dispatcher.unregister(context, tag)

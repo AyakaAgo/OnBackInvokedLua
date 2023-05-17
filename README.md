@@ -41,7 +41,7 @@ If you don't provide a value, it defaults to `false` and does the following:
 
 ### Add proxy classes for `luajava.override`
 
-> **Note: If your `luajava` fixed `luajava.override`, `luajava.new` object cast problem, you can ignore this step**
+> **Note: If your `luajava` fixed `luajava.override`, `luajava.new` object cast problem, you can ignore this step.**
 
 > **Note: This is not a standard Android Studio/IntelliJ IDEA/... project, please move files manually.**
 
@@ -49,6 +49,8 @@ If the object returned by `luajava.override`, `luajava.new` has a wrong type, ad
 
 - BackInvokedCallback.java
 - BackAnimationCallback.java
+
+**If you have changed class path, don't forget to modify in `backdispatcher.lua`!!!**
 
 ### Migrate to module API
 

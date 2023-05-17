@@ -77,6 +77,8 @@ local WindowFunctional=dispatcherAvailable
 
     --NOTICE
     --see lua/import
+    --if you have changed class path, don't forget to change it
+    --if your luajava has right cast for override/new, you can change to import system class
     and imports"com.windmill.window.*"
     or require"windowcallback"
 

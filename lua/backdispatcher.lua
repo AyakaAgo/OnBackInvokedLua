@@ -74,6 +74,9 @@ local WindowFunctional=dispatcherAvailable
     --NOTICE
     --new an instance with system class directly cause WRONG class cast (userdata, Proxy)
     --and CAN NOT be unregistered
+
+    --NOTICE
+    --see lua/import
     and imports"com.windmill.window.*"
     or require"windowcallback"
 

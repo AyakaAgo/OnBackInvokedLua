@@ -102,7 +102,7 @@ After opting in, your app displays animations for back-to-home, cross-activity, 
 
 <img src="https://github.com/AyakaAgo/OnBackInvokedLua/blob/main/images/bottom%20sheet.gif?raw=true" alt="animation callback in bottom sheet" width="33%"><img src="https://github.com/AyakaAgo/OnBackInvokedLua/blob/main/images/side%20sheet.gif?raw=true" alt="animation callback in side sheet" width="33%">
 <img src="https://github.com/AyakaAgo/OnBackInvokedLua/blob/main/images/search.gif?raw=true" alt="animation callback in search" width="33%">
-\**from [MDC Android](https://github.com/material-components/material-components-android/blob/master/docs/foundations/PredictiveBack.md) library.*
+*`Bottom Sheet`, `Side Sheet`, `Search` components from [MDC Android](https://github.com/material-components/material-components-android/blob/master/docs/foundations/PredictiveBack.md), gif converted from [material.io](https://m3.material.io/components).*
 
 Here's an example of how you might implement this feature:
 

@@ -3,6 +3,8 @@ Equivalent to [`OnBackInvokedDispatcher`](https://developer.android.google.cn/re
 
 Dispatcher to register `OnBackInvokedCallback`(as function or functions table) instances for handling back invocations. It also provides interfaces to update the attributes of `OnBackInvokedCallback`. Attribute updates are proactively pushed to the window manager if they change the dispatch target (a.k.a. the callback to be invoked next), or its behavior. Compatible with Android12L and below. [code samples](https://github.com/AyakaAgo/OnBackInvokedLua/tree/main/sample)
 
+> **Note: Deprecated methods are commented.**
+
 ## Constants
 
 ### PRIORITY_DEFAULT

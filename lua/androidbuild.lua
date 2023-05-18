@@ -75,8 +75,6 @@ function _M.isAtLeastR()
     return android_sdk >= 30
 end
 
---print(VERSION.CODENAME)
-
 --12
 function _M.isAtLeastS()
     return android_sdk >= 31
@@ -206,7 +204,6 @@ return setmetatable(_M, { __index = function(_M, key)
     --NOTICE
     --members may have same name
     local value--=rawget(_M,key)
-    --print(key,"in table?",value~=nil)
     --if value==nil then
     if not xpcall(function()
         value = luajava.bindClass "android.os.Build"[key]

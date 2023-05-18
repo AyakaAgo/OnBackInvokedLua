@@ -91,11 +91,10 @@ original
 onBackInvoked()
 
 changed to
-onBackInvoked(_M,ctx,tag,priority)
+onBackInvoked(_M,ctx,tag)
 @_M backdispatcher module, use to unregister
 @ctx callback registered with, Activity
 @tag callback tag
-@priority commented, unused
 ]]
 
 --@ctx Activity/Dialog
@@ -105,15 +104,11 @@ local function max(ctx,id)
   local max--=0
   --callbacks should be exists
   local data=callbacks[id]
-  --local d
   for k in pairs(data) do
-    --print((max==nil or k>max),_M.isEnabled(ctx,tags[id][k]),k)
-    --print(tags[id][k])
     if (max==nil or k>max) and _M.isEnabled(ctx,tags[id][k]) then
       max=k
     end
   end
-  --print(max)
   if max then
     return max,data[max]
   end
@@ -131,23 +126,21 @@ local function callLast(ctx,id)
   --to stop intercept, call #unregister
   --sync behavior with OnBackInvoked/AnimationCallback
   --sync parameters
-  --print(prior,prior and tags[id][prior] or nil)
   if prior then
-    (type(data)~="table" and data or data.onBackInvoked)(_M,ctx,tags[id][prior]--[[,prior]])
+    (type(data)~="table" and data or data.onBackInvoked)(_M,ctx,tags[id][prior])
     return true
   end
 end
 
 --@ctx Activity/Dialog
 local function wrapWindowCallback(ctx)
-  local window=ctx.getWindow()
   local id=ctx.hashCode()
   local callback=windowCallbacks[id]
   if callback==nil then
     --TODO
     --NOTICE
     --you should re-register if something also used windowcallback module
-    callback=WindowFunctional.new(window,{
+    callback=WindowFunctional.new(ctx.getWindow(), {
       dispatchKeyEvent=function(call,super,e)
         --onKeyUp
         return e.getKeyCode()==4--[[KeyEvent.KEYCODE_BACK]] and e.getAction()==1--KeyEvent.ACTION_UP
@@ -158,9 +151,8 @@ local function wrapWindowCallback(ctx)
     })
     windowCallbacks[id]=callback
   end
-  --print("set wrapped Window.Callback")
   --don't worry about to call this multiple times
-  --[[return ]]callback:attachToWindow(window)
+  callback:attachToWindow()
   return id
 end
 
@@ -250,9 +242,6 @@ local function register(ctx,tag,callback,priority,checkDuplicate)
   return _M
 end
 
---TODO
---replace #registerIfUnregistered to #register?
-
 --[[
 register a OnBackInvoked/AnimationCallback
 @ctx an Object with #getWindow()/#getOnBackInvokedDispatcher()
@@ -311,26 +300,16 @@ function _M.unregister(ctx,tag)
       end
     end
     --tag exist
-    --print(prior,tag)
     if prior then
       local calls=callbacks[id]
       --T+
       if dispatcherAvailable then
         ctx.getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(calls[prior])
       end
-      --print(prior)
-      --print(prior,dump(calls))
-      --TODO
-      --out of bounds
-      --table.remove(calls,prior)
-      --table.remove(tagged,prior)
       calls[prior],tagged[prior]=nil
-      --print(prior,dump(calls))
-      --print(table.size(calls))
       if table.size(calls)==0 then
         if not dispatcherAvailable then
           --restore the original callback
-          --print("set to original Window.Callback")
           windowCallbacks[id]:detachFromWindow()
         end
         callbacks[id]=nil
@@ -377,7 +356,6 @@ end
 --[[en/disable all existing callbacks whatever they are enabled or not
 --If you add a callback later, you need to manually set its enabled state
 function _M.setAllEnabled(ctx,enabled)
-  --print("all enabled",enabled)
   local id=ctx.hashCode()
   local tagged=tags[id]
   if tagged then
@@ -390,7 +368,6 @@ function _M.setAllEnabled(ctx,enabled)
 end]]
 
 function _M.setEnabled(ctx,tag,enabled)
-  --print(tag,"enabled",enabled)
   local id=ctx.hashCode()
   local en=enables[id]
   if en then

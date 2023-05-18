@@ -16,21 +16,20 @@ Copyright (C) 2018-2022 The AGYS Windmill Open Source Project
 --local Build=luajava.bindClass"android.os.Build"
 local VERSION = luajava.bindClass "android.os.Build$VERSION"
 --local VERSION_CODES=luajava.bindClass"android.os.Build$VERSION_CODES"
+
 local android_sdk = VERSION.SDK_INT
+
 local _M = {
     SDK_INT = android_sdk,
-    --constant in SdkExtensions
-    --AD_SERVICES=1000000,
+    --constant in android.os.ext.SdkExtensions
+    AD_SERVICES=1000000,
 }
 
 -------------------------
 
 local function isAtLeastPreReleaseCodename(codename)
     local systemCodename = VERSION.CODENAME
-    if systemCodename == "REL" then
-        return false
-    end
-    return codename:upper() >= systemCodename:upper()
+    return systemCodename ~= "REL" and codename:upper() >= systemCodename:upper()
 end
 
 --TODO
@@ -108,10 +107,7 @@ end
 
 local function isAtMostPreReleaseCodename(codename)
     local systemCodename = VERSION.CODENAME
-    if systemCodename == "REL" then
-        return true
-    end
-    return codename:upper() < systemCodename:upper()
+    return systemCodename ~= "REL" and codename:upper() < systemCodename:upper()
 end
 
 --6
@@ -157,9 +153,6 @@ function _M.isAtMostR()
     return android_sdk < 30
 end
 
---TODO
---test isAtMostPreReleaseCodename
-
 --12
 function _M.isAtMostS()
     if android_sdk == 31 then
@@ -193,19 +186,20 @@ end
 
 -----------------------
 
---@return versions int: immutable 
+--voids in android.os.ext.SdkExtensions
+
+--@return versions int[] (getAllExtensionVersions is immutable)
 function _M.getAllSdkExtensionVersions()
     return _M.isAtLeastS() and luajava.bindClass "android.os.ext.SdkExtensions"
                                       .getAllExtensionVersions()
             or []
 end
 
+--@throws IllegalArgumentException
 function _M.getSdkExtensionVersion(sdk_int)
-    if _M.isAtLeastR() then
-        return luajava.bindClass "android.os.ext.SdkExtensions"
+    return _M.isAtLeastR() and luajava.bindClass "android.os.ext.SdkExtensions"
                       .getExtensionVersion(sdk_int)
-    end
-    return -1
+            or -1
 end
 
 return setmetatable(_M, { __index = function(_M, key)

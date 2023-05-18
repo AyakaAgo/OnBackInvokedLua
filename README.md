@@ -146,7 +146,12 @@ backDispatcher.register(
 
 > **Note: onBackStarted, onBackCancelled, onBackProgressed on available in Android 14 and later, see [OnBackAnimationCallback](https://developer.android.google.cn/reference/kotlin/android/window/OnBackAnimationCallback)**
 
-### Test the predictive back gesture animation
+## module API documentation
+
+- [`backdispatcher.lua`](https://github.com/AyakaAgo/OnBackInvokedLua/blob/main/doc/backdispatcher.md)
+- [`windowcallback.lua`](https://github.com/AyakaAgo/OnBackInvokedLua/blob/main/doc/windowcallback.md)
+
+## Test the predictive back gesture animation
 Starting with the Android 13 final release, you should be able to enable a developer option to test the back-to-home animation.
 
 To test this animation, complete the following steps:

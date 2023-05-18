@@ -18,16 +18,10 @@ Copyright (C) 2018-2022 The AGYS Windmill Open Source Project
 
 --NOTICE
 --TODO
---do not use directly, migrate with your own import.lua
+--simplified, DO NOT use directly, merge to your own import.lua
 
 local _G=_G
-local require=_G.require
-local table=_G.table--require "table"
---local context=_G.activity or _G.service
---print(activity,service)
-local luajava=_G.luajava
---local insert=table.insert
-local bindClass=luajava.bindClass
+local bindClass=_G.luajava.bindClass
 
 local function insert(t,d)
   t[#t+1]=d
@@ -43,21 +37,7 @@ end
 --TODO
 --modify to your necessary packages
 local packages=[
-  'android.widget.',
-  'android.view.',
-  "android.content.",
-  'com.androlua.',
-  "android.os.",
-  "android.app.",
-  "android.net.",
-  "android.util.",
-  "java.io.",
-  'java.lang.',
-  'java.util.',
-  "android.animation.",
-  "android.view.animation.",
-  "android.graphics.",
-  "android.graphics.drawable."
+  'android.widget.'
 ]
 
 --NOTICE
@@ -96,6 +76,4 @@ _G.setmetatable(_G,{
   end
 })
 
-_G.loadlayout=require"loadlayout"
-
---return _G
+_G.loadlayout=_G.require"loadlayout"

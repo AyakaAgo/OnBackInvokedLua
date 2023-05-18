@@ -108,10 +108,6 @@ end
 table.clear(tmp)
 tmp=nil
 
---[[for k in pairs(_M) do
-print(k)
-end]]
-
 ----------------------
 
 _M.throw=throw

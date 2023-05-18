@@ -41,26 +41,26 @@ A: use #register or #registerIfUnregistered method to intercept, see method comm
    use #unregister to stop intercept.
 
    NOTICE: don't return true/false in intercept callback, we don't intercept events by return
-   value and make sure you #unregister if things done otherwise the user won't be able to
-   navigate up
+           value and make sure you #unregister if things done otherwise the user won't be able to
+           navigate up
+
+   NOTICE: unless you #unregister or #setEnabled with false to a callback, they will always
+           intercept back events, but onKeyUp(Down) may not.
 
 Q: Will it get callback if predictive back animation is disabled?
 A: Yes. If you declared callback enabled in manifest, you will always receive then. The option
    in Developer Option only affect visual effect.
-
-   NOTICE: If you declared callback enabled in manifest and running in 33 or higher platform,
-            you will not get onKeyUp(Down) with KEYCODE_BACK event but KEYCODE_BACK
-            isn't deprecated. (see Q5)
-
-Q: Will it get animation callback if predictive back animation is disabled?
-A: same to Q3
+            
+   NOTICE: If you declared callback enabled in manifest and running in API level 33 or higher platform,
+           you will not get onKeyUp(Down) with KEYCODE_BACK event and onBackPressed, but KEYCODE_BACK
+           isn't deprecated. (see Q4)
 
 Q: Should I migrate all KEYCODE_BACK to this callback?
-A: No, you will get KEYCODE_BACK in some cases, such as a View added by WindowManager
-   #addView. But if you are using Activity or Dialog, you should.
+A: No, you will get KEYCODE_BACK in some cases, such as a View added by WindowManager#addView.
+   But if you are using Activity or Dialog, you should.
 
 more information in
-https://developer.android.google.cn/guide/navigation/predictive-back-gesture?hl=en
+https://developer.android.google.cn/guide/navigation/predictive-back-gesture
 ]]
 
 local WindowFunctional=dispatcherAvailable
@@ -73,6 +73,7 @@ local WindowFunctional=dispatcherAvailable
     --if you have changed class path, don't forget to change it
     --if your luajava has right cast for override/new, you can change to import system class
     and imports"com.windmill.window.*"
+    --Android Sv2 and lower
     or require"windowcallback"
 
 --configurations
@@ -146,11 +147,13 @@ local function wrapWindowCallback(ctx)
     --TODO
     --NOTICE
     --you should re-register if something also used windowcallback module
-    callback=WindowFunctional:new(window,{
+    callback=WindowFunctional.new(window,{
       dispatchKeyEvent=function(call,super,e)
-        return e.getKeyCode()==4 and e.getAction()==1
-        and callLast(ctx,id)
-        or super(e)
+        --onKeyUp
+        return e.getKeyCode()==4--[[KeyEvent.KEYCODE_BACK]] and e.getAction()==1--KeyEvent.ACTION_UP
+          and callLast(ctx,id)
+          --other key event
+          or super(e)
       end
     })
     windowCallbacks[id]=callback
@@ -370,7 +373,8 @@ local function setEnabled(ctx,tag,enabled,id,en)
   end
 end
 
---en/disable all existing callbacks whatever they are enabled or not
+--@Deprecated test only
+--[[en/disable all existing callbacks whatever they are enabled or not
 --If you add a callback later, you need to manually set its enabled state
 function _M.setAllEnabled(ctx,enabled)
   --print("all enabled",enabled)
@@ -383,7 +387,7 @@ function _M.setAllEnabled(ctx,enabled)
     end
   end
   return _M
-end
+end]]
 
 function _M.setEnabled(ctx,tag,enabled)
   --print(tag,"enabled",enabled)
@@ -401,8 +405,6 @@ function _M.isEnabled(ctx,tag)
 end
 
 -------------------------
-
---unused
 
 function _M.getRegisteredTags(ctx)
   local tagged=tags[ctx.hashCode()]
@@ -456,8 +458,9 @@ function _M.hasCallback(ctx)
   return tags[ctx.hashCode()]~=nil
 end
 
+--@Deprecated access isBackGesturePredictable instead
 --[[function _M.isBackGesturePredictable()
-return dispatcherAvailable
+  return dispatcherAvailable
 end]]
 
 _M.isBackGesturePredictable=dispatcherAvailable
@@ -495,7 +498,7 @@ go back without a actual key event
 @return true if there are still any callbacks registered, otherwise you can finish the Activity
 
 NOTICE
-onKeyUp(Down) will be ignored
+onBackPressed/onKeyUp(Down) will be ignored
 ]]
 function _M.back(ctx,finish)
   local id=ctx.hashCode()

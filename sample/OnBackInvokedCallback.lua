@@ -55,5 +55,5 @@ activity.setContentView(loadlayout{
     })
 
   end,
-  gravity=Gravity.CENTER
+  gravity=17--Gravity.CENTER
 })

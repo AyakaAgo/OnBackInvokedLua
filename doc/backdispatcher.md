@@ -316,4 +316,4 @@ Copyright (C) 2018-2023 The AGYS Windmill Open Source Project
 	limitations under the License.
 ```
 
-*Some content and code samples on this page are subject to the licenses described in the [Content License](https://developer.android.google.cn/license).*
+<sub>Some content and code samples on this page are subject to the licenses described in the [Content License](https://developer.android.google.cn/license).</sub>

@@ -23,6 +23,8 @@
 - [OnBackInvokedCallback](https://developer.android.google.cn/reference/android/window/OnBackInvokedCallback) - back event interception (animated [OnBackAnimationCallback](https://developer.android.google.cn/reference/android/window/OnBackAnimationCallback))
 - [OnBackInvokedDispatcher](https://developer.android.google.cn/reference/android/window/OnBackInvokedDispatcher) - key event host
 
+> **Note**: Android 13 doesn't make the predictive back gesture visible to users, but it does provide an early version of the UI as a developer option for testing. Google plans to make this UI available to users in a future Android release. In the meantime, we strongly recommend updating your app to ensure you get the latest updates.
+
 ----------------------------
 
 ## Add support for the predictive back gesture

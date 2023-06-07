@@ -1,9 +1,15 @@
 # [backdispatcher.lua](https://github.com/AyakaAgo/OnBackInvokedLua/blob/main/lua/backdispatcher.lua)
 Equivalent to [`OnBackInvokedDispatcher`](https://developer.android.google.cn/reference/android/window/OnBackInvokedDispatcher).
 
-Dispatcher to register `OnBackInvokedCallback`(as function or functions table) instances for handling back invocations. It also provides interfaces to update the attributes of `OnBackInvokedCallback`. Attribute updates are proactively pushed to the window manager if they change the dispatch target (a.k.a. the callback to be invoked next), or its behavior. Compatible with Android12L and below. [code samples](https://github.com/AyakaAgo/OnBackInvokedLua/tree/main/sample)
+Dispatcher to register `OnBackInvokedCallback`(as function or functions table) instances for handling back invocations. It also provides interfaces to update the attributes of `OnBackInvokedCallback`. Attribute updates are proactively pushed to the window manager if they change the dispatch target (a.k.a. the callback to be invoked next), or its behavior. Compatible with Android12L and below.
 
-> **Note: Deprecated methods are commented.**
+[Code samples](https://github.com/AyakaAgo/OnBackInvokedLua/tree/main/sample) · [Predctive Bcak Gesture Overview](https://github.com/AyakaAgo/OnBackInvokedLua/blob/main/README.md)
+
+> **Warning**: If you don’t update your app by the next major version of Android following 13, users will experience broken Back navigation when running your app.
+
+> **Note**: Android 13 doesn't make the predictive back gesture visible to users, but it does provide an early version of the UI as a developer option for testing. Google plans to make this UI available to users in a future Android release. In the meantime, we strongly recommend updating your app to ensure you get the latest updates.
+
+> **Note**: ~~Deprecated~~ methods are commented.
 
 ## Constants
 
@@ -38,6 +44,8 @@ If platform version supports `OnBackAnimationCallback`.
 function register(context, tag, callback, priority)
 ```
 Equivalent to [registerOnBackInvokedCallback](https://developer.android.google.cn/reference/android/window/OnBackInvokedDispatcher#registerOnBackInvokedCallback(int,%20android.window.OnBackInvokedCallback)). Registers a `OnBackInvokedCallback`. **The same priority or tag of callbacks are not allowed**. Higher priority callbacks are invoked before lower priority ones.
+
+> **Note**: To synchronize behavior with the new platform API, we **DO NOT** intercept back events by the callback's return value, so **DO NOT** return boolean in callbacks. You **SHOULD** always call `unregister` or `setEnabled` to stop intercepting back events.
 
 if `callback` is table value and it only contains `onBackInvoked`:
 ```lua
@@ -80,6 +88,8 @@ function registerIfUnregistered(context, tag, callback, priority)
 ```
 Equivalent to [registerOnBackInvokedCallback](https://developer.android.google.cn/reference/android/window/OnBackInvokedDispatcher#registerOnBackInvokedCallback(int,%20android.window.OnBackInvokedCallback)). Registers a `OnBackInvokedCallback`. **The same priority or tag of callbacks are not allowed**. Higher priority callbacks are invoked before lower priority ones.
 
+> **Note**: To synchronize behavior with the new platform API, we **DO NOT** intercept back events by the callback's return value, so **DO NOT** return boolean in callbacks. You **SHOULD** always call `unregister` or `setEnabled` to stop intercepting back events.
+
 **paramaters**
 | name | type | description |
 | :----- | :----- | :----- |
@@ -105,6 +115,8 @@ function unregister(context, tag)
 ```
 Equivalent to [unregisterOnBackInvokedCallback](https://developer.android.google.cn/reference/android/window/OnBackInvokedDispatcher#unregisterOnBackInvokedCallback(android.window.OnBackInvokedCallback)). Unregisters an `OnBackInvokedCallback`.
 
+> **Warning**: Unregister the OnBackInvokedCallback when ready to stop intercepting the back gesture. Otherwise, users may see undesirable behavior when using a system Back navigation—for example, "getting stuck" between views and forcing them to force quit your app.
+
 **paramaters**
 | name | type | description |
 | :----- | :----- | :----- |
@@ -116,13 +128,13 @@ Equivalent to [unregisterOnBackInvokedCallback](https://developer.android.google
 | :----- | :----- |
 | table | module itself |
 
-### setAllEnabled
+### ~~setAllEnabled~~
 ```lua
 function setAllEnabled(context, enabled)
 ```
-> **Deprecated: test only**
+> **Deprecated**: test only.
 
-Set the enabled state of all registered callbacks, subsequent registered callbacks will be added with enabled state. Only enabled callback will receive callbacks to `onBackInvoked`.
+Set the enabled state of all registered callbacks, subsequent registered callbacks are enabled by default. Only enabled callback will receive callbacks to `onBackInvoked`.
 
 **paramaters**
 | name | type | description |
@@ -252,11 +264,12 @@ Determine if a context has any registered `OnBackInvokedCallback`.
 | :----- | :----- |
 | boolean | If there is any `OnBackInvokedCallback` registered. |
 
-### isBackGesturePredictable
+### ~~isBackGesturePredictable~~
 ```lua
 function isBackGesturePredictable()
 ```
-> **Deprecated: access isBackGesturePredictable instead**
+> **Deprecated**: access `isBackGesturePredictable` instead.
+
 If platform version supports `OnBackInvokedCallback`.
 
 **returns**

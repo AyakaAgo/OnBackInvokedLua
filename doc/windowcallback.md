@@ -2,16 +2,15 @@
 
 Wrapper for [Window.Callback](https://developer.android.google.cn/reference/android/view/Window.Callback). `Window.Callback` is an API from a Window back to its caller. This allows the client to intercept key dispatching, panels and menus, etc.
 
+> **Note**: The design purpose of this module has changed from targeting multiple windows to a single window.
+
 You can nested wrap multiple times, but may impact performance.
 
-> **Note: Prefer calling defined methods to get values in metatable instead of accessing them directly.**
-
-> **Note: use `:` to call non-constructor method.**\
-> `require"windowcallback".new(...):attachToWindow()`
-
-> **Note: Deprecated methods are commented.**
+> **Note**: ~~Deprecated~~ methods are commented.
 
 ## Constructor
+
+> **Note**: use `.` to call constructor method. `require"windowcallback".new(...)`
 
 ### new
 ```lua
@@ -28,13 +27,49 @@ function new(window, callback)
 | :----- | :----- |
 | table | `windowcallback` instance |
 
+## Metatdata
+
+> **Note**: Prefer calling defined methods to get values in metatable instead of accessing them directly.
+
+### callback
+```lua
+callback = luajavaoverride(Window.Callback, ...)
+```
+`Window.Callback` wrapper
+
+### attached
+```lua
+attached = false
+```
+Determine if the wrapped `Window.Callback` is set to the Window.
+
+### window
+```lua
+window = Window
+```
+`Window` to wrap its `Callback`.
+
+### superCallback
+```lua
+window = Window.Callback
+```
+the original `Window.Callback` of the window.
+
+### functions
+```lua
+functions = table
+```
+callback table
+
 ## Methods
 
-### setCallbackFunction
+> **Note**: use `:` to call non-constructor method. `require"windowcallback".new(...):attachToWindow()`
+
+### ~~setCallbackFunction~~
 ```lua
 function setCallbackFunction(self, voidName, callbackFunction)
 ```
-> **Deprecated: It's not recommended to modify the wrapper function(s).**
+> **Deprecated**: It's not recommended to modify the wrapper function(s).
 
 set or replace a callback table value, for example:
 ```lua
@@ -64,11 +99,11 @@ end)
 | :----- | :----- |
 | table | `windowcallback` instance |
 
-### setCallback
+### ~~setCallback~~
 ```lua
 function setCallback(self, callback)
 ```
-> **Deprecated: It's not recommended to modify the wrapper function(s).**
+> **Deprecated**: It's not recommended to modify the wrapper function(s).
 
 set or replace callback table
 
@@ -83,11 +118,13 @@ set or replace callback table
 | :----- | :----- |
 | table | `windowcallback` instance |
 
-### setSuperCallback
+### ~~setSuperCallback~~
 ```lua
 function setSuperCallback(self, callback)
 ```
-> **Deprecated: You may lose the original `Window.Callback`. Methods have been refactored and this method is no longer valid.**
+> **Deprecated**: Methods have been refactored and this method is no longer valid.
+
+> **Warning**: You may lose the original `Window.Callback`. 
 
 set [Window.Callback](https://developer.android.google.cn/reference/android/view/Window.Callback) to super.
 
@@ -118,11 +155,11 @@ get the original `Window.Callback` of the window
 | :----- | :----- |
 | `Window.Callback` | the original `Window.Callback` |
 
-### getCallback
+### ~~getCallback~~
 ```lua
 function getCallback(self)
 ```
-> **Deprecated: use attachToWindow instead.**
+> **Deprecated**: use `attachToWindow` instead.
 
 get the wrapped `Window.Callback`
 

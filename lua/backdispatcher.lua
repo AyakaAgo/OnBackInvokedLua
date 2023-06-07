@@ -59,8 +59,7 @@ Q: Should I migrate all KEYCODE_BACK to this callback?
 A: No, you will get KEYCODE_BACK in some cases, such as a View added by WindowManager#addView.
    But if you are using Activity or Dialog, you should.
 
-more information in
-https://developer.android.google.cn/guide/navigation/predictive-back-gesture
+more information https://developer.android.google.cn/guide/navigation/predictive-back-gesture
 ]]
 
 local WindowFunctional=dispatcherAvailable
@@ -92,13 +91,13 @@ onBackInvoked()
 
 changed to
 onBackInvoked(_M,ctx,tag)
-@_M backdispatcher module, use to unregister
+@_M  backdispatcher module, use to unregister
 @ctx callback registered with, Activity
 @tag callback tag
 ]]
 
---@ctx Activity/Dialog
---@id hashCode of ctx
+--@ctx    Activity/Dialog
+--@id     hashCode of ctx
 --@return max priority and associated callback
 local function max(ctx,id)
   local max--=0
@@ -114,8 +113,8 @@ local function max(ctx,id)
   end
 end
 
---@ctx Activity/Dialog
---@id hashCode of ctx
+--@ctx    Activity/Dialog
+--@id     hashCode of ctx
 --@return if has callback
 local function callLast(ctx,id)
   --only when we have at least one callback registered
@@ -158,8 +157,8 @@ end
 
 ---------------------
 
---@id hashCode of Activity/Dialog
---@tag callback tag
+--@id             hashCode of Activity/Dialog
+--@tag            callback tag
 --@priority
 --@checkDuplicate true to throw if tag or priority exists
 local function registerCheck(id,tag,priority,checkDuplicate)
@@ -244,26 +243,26 @@ end
 
 --[[
 register a OnBackInvoked/AnimationCallback
-@ctx an Object with #getWindow()/#getOnBackInvokedDispatcher()
-      Activity/Dialog
-@tag callback name for unregister, must be non-nil
+@ctx      an Object with #getWindow()/#getOnBackInvokedDispatcher()
+          Activity/Dialog
+@tag      callback name for unregister, must be non-nil
 @callback table/function.
-           function corresponding to OnBackInvoked/AnimationCallback#onBackInvoked
-           table any method in OnBackInvoked/AnimationCallback
-           DO NOT change table values(functions) after registered (suggested)
+          function corresponding to OnBackInvoked/AnimationCallback#onBackInvoked
+          table any method in OnBackInvoked/AnimationCallback
+          DO NOT change table values(functions) after registered (suggested)
 @priority number larger priority will get callback first, CAN NOT be negative
           leave nil to +1 to previous
 
-@throws exceptions.runtime if tag or priority already exists
-@return backdispatcher chain call
+@throws   exceptions.runtime if tag or priority already exists
+@return   backdispatcher chain call
 ]]
 function _M.register(ctx,tag,callback,priority)
   return register(ctx,tag,callback,priority,true)
 end
 
 --same parameters with #register
---but WILL NOT throw exception if tag/priority exists
---WILL NOT replace if tag/priority exists
+--but will NOT throw exception if tag/priority exists
+--will NOT replace if tag/priority exists
 function _M.registerIfUnregistered(ctx,tag,callback,priority)
   local tagged=tags[ctx.hashCode()]
   if tagged then
@@ -277,16 +276,13 @@ function _M.registerIfUnregistered(ctx,tag,callback,priority)
 end
 
 --NOTICE
---once you call #register(Xxx) to intercept a back event,
---you MUST call #unregister if no longer needed
+--once you call #register(Xxx) to intercept a back event you MUST call #unregister if no longer needed
 --we DO NOT intercept by true/false return value (sync with OnBackInvoked/AnimationCallback)
 
 --[[
-unregister a callback to stop interception
+unregister a callback to stop interception, you can call this in #onBackInvoked
 @ctx previously registered
 @tag callback name
-
-you can call this in #onBackInvoked
 ]]
 function _M.unregister(ctx,tag)
   local id=ctx.hashCode()
@@ -323,12 +319,29 @@ end
 
 -------------------
 
-local function setEnabled(ctx,tag,enabled,id,en)
+--NOTICE
+--check dispatcherAvailable before calling this
+local function enableCallback(en,id)
+  local disabledCount=0
+  for _,v in pairs(en) do
+    if v then
+      windowCallbacks[id]:attachToWindow()
+      return
+    end
+    disabledCount=1+disabledCount
+  end
+  if disabledCount==table.size(en) then
+    windowCallbacks[id]:detachFromWindow()
+  end
+end
+
+local function setEnabled(ctx,tag,enabled,id,en,checkCallback)
   local prev=en[tag]
-  prev=prev==nil or prev
+  if prev==nil then
   --prevent re-re/unregister in Android 13+
-  if prev~=enabled then
+  elseif prev~=enabled then
     en[tag]=enabled
+    --T+
     if dispatcherAvailable then
       local prior
       local tagged=tags[id]
@@ -338,16 +351,23 @@ local function setEnabled(ctx,tag,enabled,id,en)
           break
         end
       end
-      local callback=callbacks[prior]
+      if prior==nil then
+        return
+      end
+      local callback=callbacks[id][prior]
       --stop intercept
       if enabled then
         ctx.getOnBackInvokedDispatcher().registerOnBackInvokedCallback(prior,callback)
        else
         --DO NOT remove in #callbacks
-        ctx.getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(prior)
+        ctx.getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(callback)
       end
+     else
       --no need to remove below 13
       --see #isEnabled
+      if checkCallback then
+        enableCallback(en,id)
+      end
     end
   end
 end
@@ -363,6 +383,9 @@ function _M.setAllEnabled(ctx,enabled)
     for _,tag in pairs(tagged) do
       setEnabled(ctx,tag,enabled,id,en)
     end
+    if not dispatcherAvailable then
+      enableCallback(en,id)
+    end
   end
   return _M
 end]]
@@ -371,11 +394,12 @@ function _M.setEnabled(ctx,tag,enabled)
   local id=ctx.hashCode()
   local en=enables[id]
   if en then
-    setEnabled(ctx,tag,enabled,id,en)
+    setEnabled(ctx,tag,enabled,id,en,true)
   end
   return _M
 end
 
+--@return false if tag is disabled or not registered
 function _M.isEnabled(ctx,tag)
   local en=enables[ctx.hashCode()]
   return en and en[tag]
@@ -451,8 +475,8 @@ larger priority will get callback first
 get the next priority that does not conflict with existing callbacks
 
 @base non-negative number(int), expected lowest priority
-        if nil, return next priority of existing callbacks
-        if non-nil, return base or the next priority of existing callbacks which is larger
+      if nil, return next priority of existing callbacks
+      if non-nil, return base or the next priority of existing callbacks which is larger
 ]]
 function _M.nextPriority(ctx,base)
   local tagged=tags[ctx.hashCode()]

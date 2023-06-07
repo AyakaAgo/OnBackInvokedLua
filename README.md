@@ -143,14 +143,14 @@ backDispatcher.register(
       view.setTranslationX(backEvent.getSwipeEdge() == backEvent.EDGE_LEFT and translation or -translation)
         .setScaleX(scale).setScaleY(scale)
     end,
-    onBackInvoked=function(dispatcher, context, tag) {
+    onBackInvoked=function(dispatcher, context, tag)
       --Do something after the back gesture completes.
     end,
-    onBackCancelled=function() {
+    onBackCancelled=function()
       --TODO
       --reset view's position and scale
     end,
-    onBackStarted=function() {
+    onBackStarted=function()
       --a back gesture started
     end
   },

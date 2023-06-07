@@ -188,7 +188,6 @@ function _M.attachToWindow(self)
     return self
 end
 
---make sure have attached one
 function _M.detachFromWindow(self)
     if rawget(self, "attached") then
         rawget(self, "window").setCallback(rawget(self, "superCallback"))

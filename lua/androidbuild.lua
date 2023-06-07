@@ -22,7 +22,7 @@ local android_sdk = VERSION.SDK_INT
 local _M = {
     SDK_INT = android_sdk,
     --constant in android.os.ext.SdkExtensions
-    AD_SERVICES=1000000,
+    AD_SERVICES = 1000000,
 }
 
 -------------------------

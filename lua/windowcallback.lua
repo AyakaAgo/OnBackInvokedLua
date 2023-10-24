@@ -17,6 +17,10 @@ local _M = {}
 local rawget = rawget
 local Callback = luajava.bindClass "android.view.Window$Callback"
 
+---@param self table<function> table created from _M.new()
+---@param key string void name in WindowCallback
+---@param defVal any alternative return value
+---@return any
 local function doCallback(self, key, defVal, ...)
     --super
     local super = rawget(self, "superCallback")
@@ -49,9 +53,9 @@ end
 
 -----------------
 
---@window callback to super
---@callbacks custom callback
---call #attachToWindow to apply wrapped callback 
+--call #attachToWindow to apply wrapped callback
+---@param window "android.view.Window" callback to super
+---@param callbacks table<function> custom callback
 function _M.new(window, callbacks)
     local self
     self = setmetatable({
@@ -109,7 +113,7 @@ function _M.new(window, callbacks)
             end,
             onSearchRequested = function(e)
                 --if e then
-                    return doCallback(self, "onSearchRequested", false, e)
+                return doCallback(self, "onSearchRequested", false, e)
                 --end
                 --return doCallback(self,"onSearchRequested",false)
             end,
@@ -121,7 +125,7 @@ function _M.new(window, callbacks)
             end,
             onWindowStartingActionMode = function(callback, type)
                 --if type then
-                    return doCallback(self, "onWindowStartingActionMode", false, callback, type)
+                return doCallback(self, "onWindowStartingActionMode", false, callback, type)
                 --end
                 --return doCallback(self,"onWindowStartingActionMode",false,callback)
             end,
@@ -142,9 +146,9 @@ end
 
 ------------------
 
---@Deprecated
---[[set or replace a callback table value
-function _M.setCallbackFunction(self, key, func)
+---@Deprecated
+---set or replace a callback table value
+--[[function _M.setCallbackFunction(self, key, func)
     local funcs = rawget(self, "functions")
     if funcs == nil then
         funcs = {}
@@ -154,32 +158,33 @@ function _M.setCallbackFunction(self, key, func)
     return self
 end]]
 
---@Deprecated
---[[set or replace whole callback table
-function _M.setCallback(self, calls)
+---@Deprecated
+---set or replace whole callback table
+--[[function _M.setCallback(self, calls)
     rawset(self, "functions", calls)
     return self
 end]]
 
---@Deprecated
+---@Deprecated
 --[[function _M.setSuperCallback(self, call)
     rawset(self, "superCallback", call)
     return self
 end]]
 
+---@param self table<function> table created from _M.new()
 function _M.getOriginalWindowCallback(self)
     return rawget(self, "superCallback")
 end
 
 --------------------
 
---@Deprecated
---get instance
---use attachToWindow instead
+---@Deprecated
+---get instance. use attachToWindow instead
 --[[function _M.getCallback(self)
     return self.callback
 end]]
 
+---@param self table<function> table created from _M.new()
 function _M.attachToWindow(self)
     if not rawget(self, "attached") then
         self.attached = true
@@ -188,6 +193,7 @@ function _M.attachToWindow(self)
     return self
 end
 
+---@param self table<function> table created from _M.new()
 function _M.detachFromWindow(self)
     if rawget(self, "attached") then
         rawget(self, "window").setCallback(rawget(self, "superCallback"))
@@ -196,6 +202,7 @@ function _M.detachFromWindow(self)
     return self
 end
 
+---@param self table<function> table created from _M.new()
 function _M.isAttachedToWindow(self)
     return rawget(self, "attached")
 end

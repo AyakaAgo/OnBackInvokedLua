@@ -14,9 +14,12 @@ Copyright (C) 2018-2022 The AGYS Windmill Open Source Project
 	limitations under the License.
 ]]
 --local Build=luajava.bindClass"android.os.Build"
+---@type "android.os.Build$VERSION java class"
 local VERSION = luajava.bindClass "android.os.Build$VERSION"
 --local VERSION_CODES=luajava.bindClass"android.os.Build$VERSION_CODES"
 
+---android sdk version int
+---@type number
 local android_sdk = VERSION.SDK_INT
 
 local _M = {
@@ -27,6 +30,8 @@ local _M = {
 
 -------------------------
 
+---@param codename string android version code name
+---@return boolean is equal or larger than this pre-release version
 local function isAtLeastPreReleaseCodename(codename)
     local systemCodename = VERSION.CODENAME
     return systemCodename ~= "REL" and codename:upper() >= systemCodename:upper()
@@ -35,67 +40,65 @@ end
 --TODO
 --if your app supports M- versions
 
---6
+---6
 --[[function _M.isAtLeastM()
     return android_sdk>=23
 end]]
 
---7
+---7
 function _M.isAtLeastN()
     return android_sdk >= 24
 end
 
---7.1
+---7.1
 function _M.isAtLeastNMR1()
     return android_sdk >= 25
 end
 
---8
+---8
 function _M.isAtLeastO()
     return android_sdk >= 26
 end
 
---8.1
+---8.1
 function _M.isAtLeastOMR1()
     return android_sdk >= 27
 end
 
---9
+---9
 function _M.isAtLeastP()
     return android_sdk >= 28
 end
 
---10
+---10
 function _M.isAtLeastQ()
     return android_sdk >= 29
 end
 
---11
+---11
 function _M.isAtLeastR()
     return android_sdk >= 30
 end
 
---12
+---12
 function _M.isAtLeastS()
     return android_sdk >= 31
             or (android_sdk >= 30 and isAtLeastPreReleaseCodename("S"))
 end
 
---12 large
+---12 large
 function _M.isAtLeastSv2()
     return android_sdk >= 32
             or (android_sdk >= 31 and isAtLeastPreReleaseCodename("Sv2"))
 end
 
---13
+---13
 function _M.isAtLeastT()
     return android_sdk >= 33
             or (android_sdk >= 32 and isAtLeastPreReleaseCodename("Tiramisu"))
 end
 
---14
---NOTICE
---prerelease version
+---14
 function _M.isAtLeastU()
     return android_sdk >= 34
             or (android_sdk >= 33 and isAtLeastPreReleaseCodename("UpsideDownCake"))
@@ -103,47 +106,52 @@ end
 
 -------------------
 
+---@param codename string android version code name
+---@return boolean is lower than this pre-release version
 local function isAtMostPreReleaseCodename(codename)
     local systemCodename = VERSION.CODENAME
     return systemCodename ~= "REL" and codename:upper() < systemCodename:upper()
 end
 
---6
+--TODO
+--if your app supports M- versions
+
+---6
 --[[function _M.isAtMostM()
     return android_sdk<=23
 end]]
 
---7
+---7
 function _M.isAtMostN()
     return android_sdk <= 24
 end
 
---7.1
+---7.1
 function _M.isAtMostNMR1()
     return android_sdk <= 25
 end
 
---8
+---8
 function _M.isAtMostO()
     return android_sdk <= 26
 end
 
---8.1
+---8.1
 function _M.isAtMostOMR1()
     return android_sdk <= 27
 end
 
---9
+---9
 function _M.isAtMostP()
     return android_sdk <= 28
 end
 
---10
+---10
 function _M.isAtMostQ()
     return android_sdk <= 29
 end
 
---11
+---11
 function _M.isAtMostR()
     if android_sdk == 30 then
         return isAtMostPreReleaseCodename("S")
@@ -151,7 +159,7 @@ function _M.isAtMostR()
     return android_sdk < 30
 end
 
---12
+---12
 function _M.isAtMostS()
     if android_sdk == 31 then
         return isAtMostPreReleaseCodename("Sv2")
@@ -159,7 +167,7 @@ function _M.isAtMostS()
     return android_sdk < 31
 end
 
---12 large
+---12 large
 function _M.isAtMostSv2()
     if android_sdk == 32 then
         return isAtMostPreReleaseCodename("Tiramisu")
@@ -167,7 +175,7 @@ function _M.isAtMostSv2()
     return android_sdk < 32
 end
 
---13
+---13
 function _M.isAtMostT()
     if android_sdk == 33 then
         return isAtMostPreReleaseCodename("UpsideDownCake")
@@ -175,45 +183,42 @@ function _M.isAtMostT()
     return android_sdk < 33
 end
 
---14
---NOTICE
---prerelease version
+---14
 function _M.isAtMostU()
     return android_sdk <= 34
 end
 
 -----------------------
 
---voids in android.os.ext.SdkExtensions
+--compat voids in android.os.ext.SdkExtensions
 
---@return versions int[] (getAllExtensionVersions is immutable)
+---@return table<number> immutable extension versions
 function _M.getAllSdkExtensionVersions()
     return _M.isAtLeastS() and luajava.bindClass "android.os.ext.SdkExtensions"
                                       .getAllExtensionVersions()
-            or []
+            or {} --TODO modify to [] if your lua support this syntax
 end
 
---@throws IllegalArgumentException
+---@param sdk_int number
+---@throws IllegalArgumentException
+---@return table<number> immutable
 function _M.getSdkExtensionVersion(sdk_int)
     return _M.isAtLeastR() and luajava.bindClass "android.os.ext.SdkExtensions"
-                      .getExtensionVersion(sdk_int)
+                                      .getExtensionVersion(sdk_int)
             or -1
 end
 
-return setmetatable(_M, { __index = function(_M, key)
+return setmetatable(_M, { __index = function(_, key)
     --NOTICE
     --members may have same name
-    local value--=rawget(_M,key)
-    --if value==nil then
-    if not xpcall(function()
+    local value
+    if xpcall(function()
         value = luajava.bindClass "android.os.Build"[key]
     end, function()
         value = VERSION[key]
+    end) or pcall(function()
+        value = luajava.bindClass "android.os.Build$VERSION_CODES"[key]
     end) then
-        pcall(function()
-            value = luajava.bindClass "android.os.Build$VERSION_CODES"[key]
-        end)
+        return value
     end
-    --end
-    return value
 end })

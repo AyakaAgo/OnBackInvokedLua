@@ -1,3 +1,6 @@
+### @Deprecated
+This lua implementation is deprecated now and contains bug, we made a new implementation in Java and are waiting for it to be open source!
+
 # OnBackInvokedLua
 [`OnBackInvokedCallback`](https://developer.android.google.cn/reference/android/window/OnBackInvokedCallback) wrapper for Androlua+, compatible with Android 6.0 - 14 *(partial tested: 12 - 14)*, `onBackPressed` or `onKeyUp(Down)`(old implementation) migration support.
 

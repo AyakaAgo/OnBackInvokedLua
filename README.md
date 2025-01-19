@@ -1,4 +1,6 @@
 # OnBackInvokedLua
+[![中文版本](https://img.shields.io/badge/中文版本-red.svg)](https://github.com/AyakaAgo/OnBackInvokedLua/blob/main/README.zh.md)
+
 [`OnBackInvokedCallback`](https://developer.android.com/reference/android/window/OnBackInvokedCallback)(library side: [LuaOnBackInvokedCallback](https://github.com/AyakaAgo/OnBackInvokedLua/blob/main/backdispatcher_lua/src/main/java/com/agyer/windmill/core/window/lua/LuaOnBackInvokedCallback.java)) wrapper for Androlua+
 
 ## Add support for the predictive back gesture

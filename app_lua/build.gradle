@@ -1,0 +1,35 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.agyer.windmill.playground.lua'
+    compileSdkPreview "Baklava"
+
+    defaultConfig {
+        applicationId "com.agyer.windmill.playground.lua"
+        minSdk 23
+        targetSdk 36
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro',  "../androlua/proguard-rules.pro"
+            signingConfig signingConfigs.debug
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+}
+
+dependencies {
+    implementation project(":androlua")
+    implementation project(":backdispatcher")
+    implementation project(":backdispatcher_lua")
+}

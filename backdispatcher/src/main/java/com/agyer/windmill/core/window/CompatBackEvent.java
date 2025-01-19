@@ -18,6 +18,8 @@ package com.agyer.windmill.core.window;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
+import android.view.InputEvent;
+import android.view.KeyEvent;
 import android.window.BackEvent;
 
 import androidx.annotation.FloatRange;
@@ -67,11 +69,24 @@ public final class CompatBackEvent {
     @SuppressLint("WrongConstant")
     @RequiresApi(api = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     CompatBackEvent(@NonNull BackEvent event) {
-        y = event.getTouchY();
-        x = event.getTouchX();
-        edge = event.getSwipeEdge();
-        progress = event.getProgress();
-        frameTimeMillis = Build.VERSION.SDK_INT >= 36 ? event.getFrameTimeMillis() : 0;
+        this(event.getTouchX(), event.getTouchY(), event.getProgress(), event.getSwipeEdge(),
+                Build.VERSION.SDK_INT >= 36 ? event.getFrameTimeMillis() : 0);
+    }
+
+    CompatBackEvent(@NonNull InputEvent event) {
+        this(0, 0, 0, EDGE_NONE, event.getEventTime());
+    }
+
+    public CompatBackEvent(float touchX, float touchY, float progress, int swipeEdge) {
+        this(touchX, touchY, progress, swipeEdge, 0);
+    }
+
+    public CompatBackEvent(float touchX, float touchY, float progress, int swipeEdge, long frameTimeMillis) {
+        this.y = touchY;
+        this.x = touchX;
+        this.edge = swipeEdge;
+        this.progress = progress;
+        this.frameTimeMillis = frameTimeMillis;
     }
 
     /**

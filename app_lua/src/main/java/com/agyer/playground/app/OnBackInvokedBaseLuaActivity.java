@@ -15,6 +15,8 @@
  */
 package com.agyer.playground.app;
 
+import android.view.KeyEvent;
+
 import androidx.annotation.NonNull;
 
 import com.agyer.windmill.core.window.OnBackInvokedDispatcher;
@@ -39,12 +41,9 @@ public class OnBackInvokedBaseLuaActivity extends LuaActivity implements OnBackI
         }
     }
 
-    /**
-     * for backward compatibility we have to trigger {@link #goBack} for dispatcher manually.
-     */
     @Override
-    public void onBackPressed() {
-        goBack();
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        return backInvokedDispatcher.dispatchKeyEvent(event) || super.dispatchKeyEvent(event);
     }
 
     @NonNull

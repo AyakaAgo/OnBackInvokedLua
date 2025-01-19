@@ -16,7 +16,10 @@
 package com.agyer.windmill.core.window;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Build;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.window.BackEvent;
 import android.window.OnBackAnimationCallback;
 
@@ -150,7 +153,7 @@ public final class OnBackInvokedDispatcher {
 
                     @Override
                     public void onBackStarted(@NonNull BackEvent backEvent) {
-                        dispatchOnBackStarted(backEvent);
+                        dispatchOnBackStarted(new CompatBackEvent(backEvent));
                     }
 
                     @Override
@@ -325,11 +328,9 @@ public final class OnBackInvokedDispatcher {
         return dispatcherOwner;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    public void dispatchOnBackStarted(@NonNull BackEvent backEvent) {
+    private void dispatchOnBackStarted(@NonNull CompatBackEvent compatBackEvent) {
         OnBackInvokedCallback invokedCallback = getLatestOrNull();
 
-        CompatBackEvent compatBackEvent = new CompatBackEvent(backEvent);
         if (invokedCallback != null) {
             invokedCallback.onBackStarted(compatBackEvent);
         } else {
@@ -338,7 +339,7 @@ public final class OnBackInvokedDispatcher {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    public void dispatchOnBackProgressed(@NonNull BackEvent backEvent) {
+    private void dispatchOnBackProgressed(@NonNull BackEvent backEvent) {
         OnBackInvokedCallback invokedCallback = getLatestOrNull();
 
         CompatBackEvent compatBackEvent = new CompatBackEvent(backEvent);
@@ -349,8 +350,8 @@ public final class OnBackInvokedDispatcher {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    public void dispatchOnBackCancelled() {
+    //@RequiresApi(api = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    private void dispatchOnBackCancelled() {
         OnBackInvokedCallback invokedCallback = getLatestOrNull();
 
         if (invokedCallback != null) {
@@ -358,6 +359,22 @@ public final class OnBackInvokedDispatcher {
         } else {
             requireDispatcherOwner().onBackCancelled();
         }
+    }
+
+    public boolean dispatchKeyEvent(@NonNull KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            switch (event.getAction()) {
+                case KeyEvent.ACTION_DOWN -> dispatchOnBackStarted(new CompatBackEvent(event));
+                case KeyEvent.ACTION_UP -> {
+                    if (event.isCanceled()) {
+                        dispatchOnBackCancelled();
+                        return false;
+                    }
+                    return dispatchOnBackInvoked();
+                }
+            }
+        }
+        return false;
     }
 
 }

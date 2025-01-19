@@ -16,6 +16,7 @@
 package com.agyer.playground.app;
 
 import android.app.Activity;
+import android.view.KeyEvent;
 
 import androidx.annotation.NonNull;
 
@@ -41,12 +42,9 @@ public class OnBackInvokedBaseActivity extends Activity implements OnBackInvoked
         }
     }
 
-    /**
-     * for backward compatibility we have to trigger {@link #goBack} for dispatcher manually.
-     */
     @Override
-    public void onBackPressed() {
-        goBack();
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        return backInvokedDispatcher.dispatchKeyEvent(event) || super.dispatchKeyEvent(event);
     }
 
     /**

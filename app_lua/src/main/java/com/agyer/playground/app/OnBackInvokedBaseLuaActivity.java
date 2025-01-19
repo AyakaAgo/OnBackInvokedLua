@@ -39,6 +39,14 @@ public class OnBackInvokedBaseLuaActivity extends LuaActivity implements OnBackI
         }
     }
 
+    /**
+     * for backward compatibility we have to trigger {@link #goBack} for dispatcher manually.
+     */
+    @Override
+    public void onBackPressed() {
+        goBack();
+    }
+
     @NonNull
     @Override
     public OnBackInvokedDispatcher getCompatOnBackInvokedDispatcher() {

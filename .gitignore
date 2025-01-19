@@ -1,0 +1,21 @@
+*.iml
+.gradle
+/local.properties
+# doesn't work?
+/.idea/*
+/.idea/caches
+/.idea/codeStyles
+/.idea/inspectionProfiles
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+*/build/
+

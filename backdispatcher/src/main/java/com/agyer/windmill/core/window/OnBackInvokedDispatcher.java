@@ -221,18 +221,15 @@ public final class OnBackInvokedDispatcher {
 
     @Priority
     public int nextPriority() {
-        int priority;
-
-        int p = -1;
+        // negative constant ignored
+        int priority = -1;
         for (int prior : intCallbacks.keySet()) {
             // must ignore enabled state
-            if (prior > p) {
-                p = prior;
+            if (prior > priority) {
+                priority = prior;
             }
         }
-        priority = p + 1;
-
-        return priority;
+        return priority + 1;
     }
 
     /**

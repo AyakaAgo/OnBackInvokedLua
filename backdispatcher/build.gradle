@@ -1,0 +1,22 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'com.agyer.windmill.backdispatcher'
+    compileSdkPreview 'Baklava'
+
+    defaultConfig {
+        minSdk 23
+        targetSdkPreview 'Baklava'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+}
+
+dependencies {
+    compileOnlyApi 'androidx.annotation:annotation-jvm:1.9.1'
+}
